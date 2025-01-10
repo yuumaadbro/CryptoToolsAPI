@@ -2,6 +2,7 @@
 using CryptoToolsAPI.Models;
 using CryptoToolsAPI.NewFolder.NewFolder;
 using CryptoToolsAPI.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CryptoToolsAPI.Controllers
@@ -17,12 +18,14 @@ namespace CryptoToolsAPI.Controllers
             _backOfficeService = backOfficeService;
         }
 
+        [Authorize]
         [HttpPost("createUser")]
         public IActionResult CreateUsers([FromBody] List<UserRequestDTO> users) 
         { 
             return Ok(_backOfficeService.CreateUsers(users));
         }
 
+        [Authorize]
         [HttpPut("updateUserStatus")]
         public IActionResult UpdateUserStatus([FromBody] List<UserStatusRequestDTO> users) 
         { 
