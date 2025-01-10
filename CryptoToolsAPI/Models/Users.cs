@@ -9,7 +9,7 @@ namespace CryptoToolsAPI.Models
         [Key]
         public Guid ID { get; set; } = new Guid();
         public string? Name { get; set; }
-        public string? Password { get; set; }
+        public string Password { get; set; }
         public string? Description { get; set; }
         public string Email { get; set; }
         public string? IPRange { get; set; }

@@ -6,6 +6,9 @@ using CryptoToolsAPI.DbContext.Settings;
 using Microsoft.Extensions.Configuration;
 using CryptoToolsAPI.Services;
 using CryptoToolsAPI.DataMappers;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
+using CryptoToolsAPI.Middlewares;
 
 namespace CryptoToolsAPI
 {
@@ -39,14 +42,36 @@ namespace CryptoToolsAPI
                 options.EnableForHttps = true;
             });
 
-            services.AddAuthentication();
+            services.AddTransient<IConfigureOptions<SwaggerGenOptions>, SwaggerConfigureOptions>();
+
+            services.AddAuthentication(x => 
+            {
+                x.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                x.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+                x.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
+            }).AddJwtBearer(x => 
+            {
+                x.TokenValidationParameters = new TokenValidationParameters
+                {
+                    ValidateLifetime = true,
+                    ValidIssuer = _configuration["JwtSettings:Issuer"],
+                    ValidAudience = _configuration["JwtSettings:Audience"],
+                    IssuerSigningKey = new SymmetricSecurityKey(System.Text.Encoding.UTF8.GetBytes(_configuration["JwtSettings:Key"]!)),
+                    ValidateIssuer = false,
+                    ValidateAudience = false,
+                    ValidateIssuerSigningKey = true
+                };
+            });
             services.AddAuthorization();
 
             services.AddScoped<IBackOfficeService, BackOfficeService>();
+            services.AddScoped<IAuthorizationService, AuthorizationService>();
 
             services.AddScoped<BackOfficeDataMapper>();
+            services.AddScoped<AuthorizationDataMapper>();
 
             services.AddDbContext<Context>();
+
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
@@ -62,10 +87,14 @@ namespace CryptoToolsAPI
                 x.SwaggerEndpoint("/swagger/v1/swagger.json", "CryptoToolsAPI V1");
                 x.RoutePrefix = string.Empty;
             });
+
             app.UseHttpsRedirection();
             app.UseAuthentication();
             app.UseAuthorization();
             app.UseResponseCompression();
+
+            app.UseMiddleware<CustomClaimsMiddleware>();
+
             app.UseMvc();
             app.UseCors(x => x
                 .AllowAnyOrigin()
