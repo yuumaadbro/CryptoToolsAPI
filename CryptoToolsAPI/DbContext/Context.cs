@@ -25,6 +25,7 @@ namespace CryptoToolsAPI.DbContext
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<Users>().HasKey(x => new { x.ID });
+            modelBuilder.Entity<Users>().Property(u => u.Enabled).HasConversion(v => v ? 1 : 0, v => v == 1);
             modelBuilder.Entity<Log>().HasKey(x => new { x.ID });
         }
 

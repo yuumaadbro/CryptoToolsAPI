@@ -4,6 +4,8 @@ using Swashbuckle.AspNetCore.SwaggerGen;
 using CryptoToolsAPI.DbContext;
 using CryptoToolsAPI.DbContext.Settings;
 using Microsoft.Extensions.Configuration;
+using CryptoToolsAPI.Services;
+using CryptoToolsAPI.DataMappers;
 
 namespace CryptoToolsAPI
 {
@@ -39,6 +41,10 @@ namespace CryptoToolsAPI
 
             services.AddAuthentication();
             services.AddAuthorization();
+
+            services.AddScoped<IBackOfficeService, BackOfficeService>();
+
+            services.AddScoped<BackOfficeDataMapper>();
 
             services.AddDbContext<Context>();
         }
