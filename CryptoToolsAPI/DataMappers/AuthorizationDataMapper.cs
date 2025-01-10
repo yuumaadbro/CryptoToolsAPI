@@ -73,7 +73,7 @@ namespace CryptoToolsAPI.DataMappers
             var claims = new List<Claim>();
             if (userID.IsNullOrEmpty()) return claims;
 
-            var user = _context.Users.Where(x => x.ID.Equals(userID.ToUpper())).FirstOrDefault();
+            var user = _context.Users.Where(x => x.ID.ToString().Equals(userID.ToUpper())).FirstOrDefault();
             if(user == null) return claims;
 
             string[] claimNames = user.Claim.Split(";");
