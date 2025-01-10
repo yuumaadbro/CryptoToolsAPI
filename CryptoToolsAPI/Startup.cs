@@ -1,6 +1,9 @@
 ﻿using Microsoft.AspNetCore.Server.Kestrel.Core;
 using Microsoft.Extensions.Options;
 using Swashbuckle.AspNetCore.SwaggerGen;
+using CryptoToolsAPI.DbContext;
+using CryptoToolsAPI.DbContext.Settings;
+using Microsoft.Extensions.Configuration;
 
 namespace CryptoToolsAPI
 {
@@ -19,7 +22,7 @@ namespace CryptoToolsAPI
             services.AddCors();
             services.AddControllers();
             services.AddEndpointsApiExplorer();
-
+            services.Configure<DbSettings>(_configuration.GetSection("ConnectionStrings"));
             services.AddSwaggerGen();
 
             //Increase maximum response size so large body responses can be sent
@@ -36,6 +39,8 @@ namespace CryptoToolsAPI
 
             services.AddAuthentication();
             services.AddAuthorization();
+
+            services.AddDbContext<Context>();
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
