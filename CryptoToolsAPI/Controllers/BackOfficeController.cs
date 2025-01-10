@@ -19,14 +19,14 @@ namespace CryptoToolsAPI.Controllers
         }
 
         [Authorize]
-        [HttpPost("createUser")]
+        [HttpPost("createUsers")]
         public IActionResult CreateUsers([FromBody] List<UserRequestDTO> users) 
         { 
             return Ok(_backOfficeService.CreateUsers(users));
         }
 
         [Authorize]
-        [HttpPut("updateUserStatus")]
+        [HttpPut("updateUsersStatus")]
         public IActionResult UpdateUserStatus([FromBody] List<UserStatusRequestDTO> users) 
         { 
             return Ok(_backOfficeService.UpdateUserStatus(users));
