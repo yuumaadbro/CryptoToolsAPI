@@ -9,6 +9,7 @@ using CryptoToolsAPI.DataMappers;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using CryptoToolsAPI.Middlewares;
+using CryptoToolsAPI.Settings;
 
 namespace CryptoToolsAPI
 {
@@ -28,6 +29,7 @@ namespace CryptoToolsAPI
             services.AddControllers();
             services.AddEndpointsApiExplorer();
             services.Configure<DbSettings>(_configuration.GetSection("ConnectionStrings"));
+            services.Configure<CryptographySettings>(_configuration.GetSection("Cryptograpgy"));
             services.AddSwaggerGen();
 
             //Increase maximum response size so large body responses can be sent
@@ -66,6 +68,7 @@ namespace CryptoToolsAPI
 
             services.AddScoped<IBackOfficeService, BackOfficeService>();
             services.AddScoped<IAuthorizationService, AuthorizationService>();
+            services.AddScoped<IEncrypterService, EncrypterService>();
 
             services.AddScoped<BackOfficeDataMapper>();
             services.AddScoped<AuthorizationDataMapper>();
@@ -89,6 +92,7 @@ namespace CryptoToolsAPI
             });
 
             app.UseHttpsRedirection();
+
             app.UseAuthentication();
             app.UseAuthorization();
             app.UseResponseCompression();
