@@ -7,6 +7,7 @@ using CryptoToolsAPI.DTOs.HttpResponses;
 
 namespace CryptoToolsAPI.Controllers
 {
+    [Authorize]
     [ApiController]
     [Route("[controller]")]
     public class BackOfficeController: ControllerBase

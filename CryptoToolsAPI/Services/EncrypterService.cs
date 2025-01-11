@@ -62,5 +62,23 @@ namespace CryptoToolsAPI.Services
                 }
             }
         }
+
+        public EncodeBase64TextResponseDTO EncodeBase64Text(EncodeBase64TextRequestDTO text)
+        {
+            byte[] textBytes = Encoding.UTF8.GetBytes(text.Text);
+            return new EncodeBase64TextResponseDTO
+            {
+                EncodedText = Convert.ToBase64String(textBytes)
+            };
+        }
+
+        public DecodeBase64TextResponseDTO DecodeBase64Text(DecodeBase64TextRequestDTO text)
+        {
+            byte[] decodedBytes = Convert.FromBase64String(text.EncodedText);
+            return new DecodeBase64TextResponseDTO 
+            { 
+                DecodedText = Encoding.UTF8.GetString(decodedBytes)
+            };
+        }
     }
 }
