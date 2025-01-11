@@ -1,5 +1,7 @@
 ﻿using CryptoToolsAPI.DTOs.Encrypter;
 using Microsoft.AspNetCore.Mvc;
+using CryptoToolsAPI.DTOs;
+using CryptoToolsAPI.DTOs.NewFolder;
 
 namespace CryptoToolsAPI.Services
 {
@@ -23,7 +25,30 @@ namespace CryptoToolsAPI.Services
             }
             catch (Exception ex)
             {
-                return BadRequest(ex);
+                return BadRequest(new BadRequestDTO
+                {
+                    Loged = DateTime.Now,
+                    Message = ex.Message,
+                    Exception = ex.StackTrace
+                });
+            }
+        }
+
+        [HttpPost("decryptAESText")]
+        public IActionResult DecryptAESText([FromBody]DecryptAESTextRequestDTO text) 
+        {
+            try
+            {
+                return Ok(_encrypterService.DecryptAESText(text));
+            }
+            catch (Exception ex) 
+            {
+                return BadRequest(new BadRequestDTO 
+                { 
+                    Loged = DateTime.Now,
+                    Message = ex.Message,
+                    Exception = ex.StackTrace
+                });
             }
         }
     }
