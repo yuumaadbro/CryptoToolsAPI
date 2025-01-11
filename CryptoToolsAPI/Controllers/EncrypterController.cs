@@ -1,5 +1,6 @@
 ﻿using CryptoToolsAPI.DTOs.Encrypter;
 using Microsoft.AspNetCore.Mvc;
+using CryptoToolsAPI.DTOs.HttpResponses;
 
 namespace CryptoToolsAPI.Services
 {
@@ -19,11 +20,40 @@ namespace CryptoToolsAPI.Services
         {
             try
             {
-                return Ok(_encrypterService.EncryptAESText(text));
+                return Ok(new Status200DTO 
+                { 
+                    Response = _encrypterService.EncryptAESText(text)
+                });
             }
             catch (Exception ex)
             {
-                return BadRequest(ex);
+                return BadRequest(new Status500DTO
+                {
+                    Logged = DateTime.Now,
+                    Message = ex.Message,
+                    Exception = ex.StackTrace
+                });
+            }
+        }
+
+        [HttpPost("decryptAESText")]
+        public IActionResult DecryptAESText([FromBody]DecryptAESTextRequestDTO text) 
+        {
+            try
+            {
+                return Ok(new Status200DTO
+                { 
+                    Response = _encrypterService.DecryptAESText(text)
+                });
+            }
+            catch (Exception ex) 
+            {
+                return BadRequest(new Status500DTO 
+                { 
+                    Logged = DateTime.Now,
+                    Message = ex.Message,
+                    Exception = ex.StackTrace
+                });
             }
         }
     }

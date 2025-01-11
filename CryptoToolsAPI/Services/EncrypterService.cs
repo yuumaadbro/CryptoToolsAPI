@@ -39,5 +39,28 @@ namespace CryptoToolsAPI.Services
 
             }
         }
+
+        public DecryptAESTextResponseDTO DecryptAESText(DecryptAESTextRequestDTO text) 
+        {
+            using (Aes aes = Aes.Create()) 
+            {
+                aes.Key = Encoding.UTF8.GetBytes(_settings.AESKey);
+                aes.IV = Encoding.UTF8.GetBytes(_settings.AESVector);
+
+                ICryptoTransform decryptor = aes.CreateDecryptor(aes.Key, aes.IV);
+
+                using (MemoryStream stream = new MemoryStream(Convert.FromBase64String(text.EncryptedText))) 
+                {
+                    using (CryptoStream cryptoStream = new CryptoStream(stream, decryptor, CryptoStreamMode.Read))
+                    using (StreamReader streamReader = new StreamReader(cryptoStream))
+                    {
+                        return new DecryptAESTextResponseDTO 
+                        { 
+                            Text = streamReader.ReadToEnd()
+                        };
+                    }
+                }
+            }
+        }
     }
 }

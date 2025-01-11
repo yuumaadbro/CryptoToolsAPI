@@ -1,9 +1,9 @@
 ﻿using CryptoToolsAPI.DTOs.BackOffice;
 using CryptoToolsAPI.Models;
-using CryptoToolsAPI.NewFolder.NewFolder;
 using CryptoToolsAPI.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using CryptoToolsAPI.DTOs.HttpResponses;
 
 namespace CryptoToolsAPI.Controllers
 {
@@ -21,15 +21,45 @@ namespace CryptoToolsAPI.Controllers
         [Authorize]
         [HttpPost("createUsers")]
         public IActionResult CreateUsers([FromBody] List<UserRequestDTO> users) 
-        { 
-            return Ok(_backOfficeService.CreateUsers(users));
+        {
+            try
+            {
+                return Ok(new Status200DTO 
+                { 
+                    Response = _backOfficeService.CreateUsers(users)
+                });
+            }
+            catch (Exception ex) 
+            {
+                return BadRequest(new Status500DTO
+                { 
+                    Logged = DateTime.Now,
+                    Message = ex.Message,
+                    Exception = ex.StackTrace
+                });
+            }
         }
 
         [Authorize]
         [HttpPut("updateUsersStatus")]
         public IActionResult UpdateUserStatus([FromBody] List<UserStatusRequestDTO> users) 
-        { 
-            return Ok(_backOfficeService.UpdateUserStatus(users));
+        {
+            try
+            {
+                return Ok(new Status200DTO 
+                { 
+                    Response = _backOfficeService.UpdateUserStatus(users)
+                });
+            }
+            catch (Exception ex) 
+            {
+                return BadRequest(new Status500DTO
+                {
+                    Logged = DateTime.Now,
+                    Message = ex.Message,
+                    Exception = ex.StackTrace
+                });
+            }
         }
     }
 }

@@ -1,4 +1,4 @@
-﻿namespace CryptoToolsAPI.NewFolder.NewFolder
+﻿namespace CryptoToolsAPI.DTOs.BackOffice
 {
     public class UserRequestDTO
     {
