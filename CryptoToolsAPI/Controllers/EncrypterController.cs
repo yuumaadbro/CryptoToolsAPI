@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using CryptoToolsAPI.DTOs.HttpResponses;
 using Microsoft.AspNetCore.Authorization;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace CryptoToolsAPI.Services
 {
@@ -88,6 +89,27 @@ namespace CryptoToolsAPI.Services
                 return Ok(new Status200DTO
                 {
                     Response = _encrypterService.DecodeBase64Text(text)
+                });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new Status500DTO
+                {
+                    Logged = DateTime.Now,
+                    Message = ex.Message,
+                    Exception = ex.StackTrace
+                });
+            }
+        }
+
+        [HttpPost("encryptRSAText")]
+        public IActionResult EncryptRSAText([FromBody] EncryptRSATextRequestDTO text) 
+        {
+            try
+            {
+                return Ok(new Status200DTO
+                {
+                    Response = _encrypterService.EncryptRSAText(text)
                 });
             }
             catch (Exception ex)

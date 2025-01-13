@@ -59,5 +59,26 @@ namespace CryptoToolsAPI.Controllers
                 });
             }
         }
+
+        [HttpPost("generateRSAKeys")]
+        public IActionResult GenerateRSAKeys() 
+        {
+            try
+            {
+                return Ok(new Status200DTO
+                {
+                    Response = _secureKeyGeneratorService.GenerateRSAKeys()
+                });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new Status500DTO
+                {
+                    Logged = DateTime.Now,
+                    Message = ex.Message,
+                    Exception = ex.StackTrace
+                });
+            }
+        }
     }
 }

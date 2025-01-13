@@ -9,5 +9,6 @@ namespace CryptoToolsAPI.Services
         public DecryptAESTextResponseDTO DecryptAESText(DecryptAESTextRequestDTO text);
         public EncodeBase64TextResponseDTO EncodeBase64Text(EncodeBase64TextRequestDTO text);
         public DecodeBase64TextResponseDTO DecodeBase64Text(DecodeBase64TextRequestDTO text);
+        public EncryptRSATextResponseDTO EncryptRSAText(EncryptRSATextRequestDTO text);
     }
 }
