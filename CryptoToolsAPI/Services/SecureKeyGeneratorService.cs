@@ -60,5 +60,17 @@ namespace CryptoToolsAPI.Services
                 };
             }
         }
+
+        public GenerateRSAKeysResponseDTO GenerateRSAKeys() 
+        {
+            using (RSA rsa = RSA.Create(2048)) 
+            {
+                return new GenerateRSAKeysResponseDTO
+                {
+                    PrivateKey = rsa.ToXmlString(true),
+                    PublicKey = rsa.ToXmlString(false)
+                };
+            }
+        }
     }
 }

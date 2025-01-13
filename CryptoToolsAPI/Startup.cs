@@ -70,6 +70,7 @@ namespace CryptoToolsAPI
             services.AddScoped<IAuthorizationService, AuthorizationService>();
             services.AddScoped<IEncrypterService, EncrypterService>();
             services.AddScoped<ISecureKeyGeneratorService, SecureKeyGeneratorService>();
+            services.AddScoped<IHashingService, HashingService>();
 
             services.AddScoped<BackOfficeDataMapper>();
             services.AddScoped<AuthorizationDataMapper>();

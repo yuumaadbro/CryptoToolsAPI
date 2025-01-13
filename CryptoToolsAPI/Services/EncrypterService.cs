@@ -80,5 +80,10 @@ namespace CryptoToolsAPI.Services
                 DecodedText = Encoding.UTF8.GetString(decodedBytes)
             };
         }
+
+        public EncryptRSATextResponseDTO EncryptRSAText(EncryptRSATextRequestDTO text) 
+        {
+            return new EncryptRSATextResponseDTO { };
+        }
     }
 }
