@@ -183,7 +183,7 @@ For added security, certain operations may be restricted to a specified range of
 1. Clone the repository to your local machine:
 
    ```bash
-   git clone https://github.com/your-username/CryptoToolsAPI.git
+   git clone https://github.com/yuumaadbro/CryptoToolsAPI.git
    cd CryptoToolsAPI
    ```
 
