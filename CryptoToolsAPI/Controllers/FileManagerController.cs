@@ -1,11 +1,13 @@
 ﻿using CryptoToolsAPI.DTOs.FileManager;
 using CryptoToolsAPI.DTOs.HttpResponses;
 using CryptoToolsAPI.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using static System.Net.Mime.MediaTypeNames;
 
 namespace CryptoToolsAPI.Controllers
 {
+    [Authorize]
     [ApiController]
     [Route("[controller]")]
     public class FileManagerController: ControllerBase
@@ -39,13 +41,13 @@ namespace CryptoToolsAPI.Controllers
         }
 
         [HttpPost("decryptFile")]
-        public IActionResult DecryptFile([FromForm] EncryptFileRequest encryptFileRequest)
+        public IActionResult DecryptFile([FromForm] DecryptFileRequest decryptFileRequest)
         {
             try
             {
                 return Ok(new Status200DTO
                 {
-                    Response = _FileManagerService.EncryptFile(encryptFileRequest)
+                    Response = _FileManagerService.DecryptFile(decryptFileRequest)
                 });
             }
             catch (Exception ex)
@@ -60,13 +62,13 @@ namespace CryptoToolsAPI.Controllers
         }
 
         [HttpPost("fileIntegrity")]
-        public IActionResult FileIntegrity([FromForm] EncryptFileRequest encryptFileRequest)
+        public IActionResult FileIntegrity([FromForm] VerifyFileRequest fileRequest)
         {
             try
             {
                 return Ok(new Status200DTO
                 {
-                    Response = _FileManagerService.EncryptFile(encryptFileRequest)
+                    Response = _FileManagerService.VerifyFile(fileRequest.File.FileName)
                 });
             }
             catch (Exception ex)

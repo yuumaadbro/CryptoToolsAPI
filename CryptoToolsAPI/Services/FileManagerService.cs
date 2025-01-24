@@ -20,19 +20,55 @@ namespace CryptoToolsAPI.Services
         {
             try
             {
-                string rootPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "Documents", "EncryptedFiles");
-                string outputFile = Path.Combine(rootPath, $"{Guid.NewGuid()}.enc");
-                using (var stream = new FileStream(outputFile, FileMode.Create))
-                {
-                    encryptFileRequest.inputFile.CopyTo(stream);
-                }
+                string tmpFile = CreateTmpFilePath("EncryptedFiles", encryptFileRequest.inputFile.FileName);
+                string outputFilePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "Documents", "EncryptedFiles", $"{encryptFileRequest.inputFile.FileName}");
 
-                return AESFileEncryption(encryptFileRequest.inputFile.FileName, outputFile);
+                if (!CopyFileToTmpFolder(encryptFileRequest.inputFile, tmpFile)) throw new Exception("");
+               
+                return AESFileEncryption(tmpFile, outputFilePath);
             }
             catch (Exception ex)
             {
                 throw new Exception(ex.Message);
             }
+        }
+
+        public DecryptFileResponse DecryptFile(DecryptFileRequest decryptFileRequest)
+        {
+            try
+            {
+                string tmpFile = CreateTmpFilePath("DecryptedFiles", decryptFileRequest.inputFile.FileName);
+                string outputFilePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "Documents", "DecryptedFiles", $"{decryptFileRequest.inputFile.FileName}");
+
+                if (!CopyFileToTmpFolder(decryptFileRequest.inputFile, tmpFile)) throw new Exception("");
+
+                return AESFileDecryption(tmpFile, outputFilePath);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
+
+        public string CreateTmpFilePath(string folderDestination, string inputFileName) 
+        {
+            string extension = Path.GetExtension(inputFileName);
+            string fileName = Path.GetFileNameWithoutExtension(inputFileName);
+            string wwwroot = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "Documents", folderDestination);
+            string tmpFile = Path.Combine(wwwroot, "tmp", inputFileName);
+
+            return tmpFile;
+        }
+
+        public bool CopyFileToTmpFolder(IFormFile inputFile, string tmpFile) 
+        {
+            try 
+            {
+                using (var stream = new FileStream(tmpFile, FileMode.Create)) inputFile.CopyTo(stream);
+
+                return true;
+            }
+            catch { return false; }
         }
 
         public EncryptFileResponse AESFileEncryption(string inputFile, string outputFile) 
@@ -50,12 +86,52 @@ namespace CryptoToolsAPI.Services
                 {
                     fsInput.CopyTo(cs);
 
+                    File.Delete(inputFile);
+
                     return new EncryptFileResponse
                     { 
-                        encryptedFile = cs.ToString(),
+                        encryptedFile = inputFile,
                         outputPath = outputFile,
                     };
                 }
+            }
+        }
+
+        public DecryptFileResponse AESFileDecryption(string inputFile, string outputFile) 
+        {
+            using (Aes aesAlg = Aes.Create())
+            {
+                aesAlg.Key = Encoding.UTF8.GetBytes(_settings.AESKey);
+                aesAlg.IV = Encoding.UTF8.GetBytes(_settings.AESVector);
+
+                ICryptoTransform decryptor = aesAlg.CreateDecryptor(aesAlg.Key, aesAlg.IV);
+
+                using (FileStream fsInput = new FileStream(inputFile, FileMode.Open, FileAccess.Read))
+                using (FileStream fsOutput = new FileStream(outputFile, FileMode.Create, FileAccess.Write))
+                using (CryptoStream cs = new CryptoStream(fsInput, decryptor, CryptoStreamMode.Read))
+                {
+                    cs.CopyTo(fsOutput);
+
+                    File.Delete(inputFile);
+
+                    return new DecryptFileResponse
+                    {
+                        FilePath = outputFile
+                    };
+                }
+            }
+        }
+
+        public VerifyFileResponse VerifyFile(string filePath) 
+        {
+            using (SHA256 sha256 = SHA256.Create())
+            using (FileStream fs = new FileStream(filePath, FileMode.Open, FileAccess.Read))
+            {
+                byte[] hashBytes = sha256.ComputeHash(fs);
+                return new VerifyFileResponse 
+                { 
+                    Hash = BitConverter.ToString(hashBytes).Replace("-", "").ToLower()
+                };
             }
         }
     }
