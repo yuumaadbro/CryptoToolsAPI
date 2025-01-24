@@ -2,9 +2,11 @@
 using Microsoft.AspNetCore.Mvc;
 using CryptoToolsAPI.DTOs.HttpResponses;
 using CryptoToolsAPI.DTOs.Hashing;
+using Microsoft.AspNetCore.Authorization;
 
 namespace CryptoToolsAPI.Controllers
 {
+    [Authorize]
     [ApiController]
     [Route("[controller]")]
     public class HashingController:ControllerBase
